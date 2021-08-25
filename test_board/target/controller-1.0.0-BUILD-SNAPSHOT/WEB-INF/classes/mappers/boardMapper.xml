@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mappers.board">
+	
+	<!-- 게시물 목록 -->
+	<select id="list" resultType="com.test.domain.BoardVO">
+ 		select
+  			bno, title, writer, regDate, viewCnt, reCnt
+ 		from tbl_board
+	</select>
+	
+	<!-- 게시물 작성 -->
+	<insert id="write" parameterType="com.test.domain.BoardVO" useGeneratedKeys="true" keyProperty="bno">
+		insert into
+			tbl_board(title, content, writer)
+				values(#{title}, #{content}, #{writer})
+	</insert>
+	
+	<!-- 게시물 조회 -->
+	<select id="view" parameterType="int" resultType="com.test.domain.BoardVO">
+		select
+			bno, title, content, writer, regDate, viewCnt, reCnt
+		from
+			tbl_board
+		where
+			bno = #{bno}
+	</select>
+	
+	<!-- 게시물 수정 -->
+	<update id="modify" parameterType="com.test.domain.BoardVO" >
+ 		update tbl_board
+  		set
+   			title = #{title},
+   			content = #{content},
+   			writer = #{writer}
+  		where bno = #{bno}
+	</update>
+	
+	<!-- 게시물 삭제 -->
+	<delete id="delete" parameterType="int">
+		delete
+			from tbl_board
+		where
+			bno = #{bno}
+	</delete>
+	
+	<!-- 게시물 총 갯수 -->
+	<select id="count" resultType="int">
+		select
+			count(bno)
+		from
+			tbl_board
+	</select>
+	
+	<!-- 게시물 목록 + 페이징 -->
+	<select id="listPage" parameterType="hashMap" resultType="com.test.domain.BoardVO">
+		select
+			bno, title, writer, regDate, viewCnt
+		from
+			tbl_board
+		order by bno desc
+			limit #{displayPost}, #{postNum}
+	</select>
+
+	<!-- 게시물 목록 + 페이징  + 검색 -->
+	<select id="listPageSearch" parameterType="hashMap" resultType="com.test.domain.BoardVO">
+ 		select
+  			bno, title, writer, regDate, viewCnt
+ 		from
+ 			tbl_board
+		<if test='searchType.equals("title")'>
+ 		 	where
+ 		 		title like concat('%', #{keyword}, '%')
+	 	</if>
+ 
+	 	<if test='searchType.equals("content")'>
+			where
+				content like concat('%', #{keyword}, '%')
+ 		</if>
+ 
+	 	<if test='searchType.equals("title_content")'>
+ 		 	where
+ 		 		title like concat('%', #{keyword}, '%') 
+ 			or content like concat('%', #{keyword}, '%')
+ 		</if>
+ 
+	 	<if test='searchType.equals("writer")'>
+ 		 	where
+ 		 		writer like concat('%', #{keyword}, '%')
+	 	</if>
+ 
+		order by bno desc
+  			limit #{displayPost}, #{postNum}
+  	</select>
+  	
+	<!-- 게시물 총 갯수 + 검색 적용 -->
+	<select id="searchCount" parameterType="hashMap" resultType="int">
+ 		select
+ 			count(bno)
+ 		from
+ 			tbl_board  
+  
+ 	<if test='searchType.equals("title")'>
+  		where
+  			title like concat('%', #{keyword}, '%')
+ 	</if>
+ 
+ 	<if test='searchType.equals("content")'>
+ 		where
+ 			content like concat('%', #{keyword}, '%')
+ 	</if>
+ 
+ 	<if test='searchType.equals("title_content")'>
+ 		where
+ 			title like concat('%', #{keyword}, '%') 
+ 		 or content like concat('%', #{keyword}, '%')
+ 	</if>
+ 
+	<if test='searchType.equals("writer")'>
+		 where writer like concat('%', #{keyword}, '%')
+	</if>
+ 
+	</select>
+	
+	<!-- 파일 업로드 -->
+	<insert id="addAttach">
+		insert into
+			tbl_attach(fullname, bno)
+		values
+			(#{fullName}, #{bno})
+	</insert>
+	
+	<!-- 파일 조회 -->
+	<select id="getAttach" resultType="string">
+		select
+			fullName
+		from
+			tbl_attach
+		where
+			bno = #{bno}
+		order by
+			regDate
+	</select>
+	
+	<!-- 파일 삭제 -->
+	<delete id="deleteAttach">
+		delete
+			from tbl_attach
+		where
+			bno = #{bno}
+	</delete>
+	
+	<!-- 파일 수정 -->
+	<insert id="replaceAttach">
+		insert
+			into tbl_attach(fullName, bno)
+		values
+			(#{fullName}, #{bno})
+	</insert>
+	
+	<!-- 게시판 조회수 -->
+	<update id="boardHit" parameterType="int">
+		update
+			tbl_board
+		set
+			viewCnt = viewCnt + 1
+		where
+			bno = #{bno}
+	</update>
+
+</mapper>

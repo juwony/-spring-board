@@ -1,0 +1,41 @@
+.search {
+	float: right;
+	margin-top: 30px;
+	padding: 0px 15px;
+}
+
+thead {
+	font-weight: bold;
+	text-align: center;
+}
+	
+td {
+	text-align: center;
+}
+	
+.paging {
+	float: left;
+	width: 100%;
+	text-align: center;
+}
+	
+.paging-body {
+	display: inline-block;
+}
+	
+.pagination {
+	font-size: 20px;
+	text-align: center;
+}
+
+	
+#btnWriteForm {
+	float: right;
+	margin-bottom: 20px;
+}
+	
+h4 {
+	padding-left: 100px;
+	padding-bottom: 10px;
+	font-weight: bold;
+}
